@@ -1,5 +1,6 @@
 package backend.converter;
 
+import java.util.HashMap;
 import java.util.Hashtable;
 
 import antlr4.*;
@@ -1072,6 +1073,30 @@ public class Converter extends PascalBaseVisitor<Object>
     	code.emit((String)visit(ctx.expression()));
     	code.emit(") ");
     	visit(ctx.statement());
+    	return null;
+    }
+    
+    @Override
+    public Object visitCaseStatement(PascalParser.CaseStatementContext ctx) {
+    	
+    	code.emit("switch(");
+    	code.emit((String)visit(ctx.expression()));
+    	code.emit("){");
+    	
+    	for(PascalParser.CaseBranchContext branchCtx: ctx.caseBranchList().caseBranch()) {
+    		code.emit("case ");
+    		if (branchCtx.caseConstantList() != null) {
+    			code.emit(branchCtx.caseConstantList().getText());
+    		}
+    		code.emit(":");
+    		if(branchCtx.statement() != null) {
+    			visit(branchCtx.statement());
+    		}
+    	}
+    	
+    	
+    	code.emit("}");
+    	
     	return null;
     }
 }
