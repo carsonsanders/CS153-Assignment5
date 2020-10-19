@@ -1064,4 +1064,14 @@ public class Converter extends PascalBaseVisitor<Object>
         
         return null;
     }
+    
+    @Override
+    public Object visitWhileStatement(PascalParser.WhileStatementContext ctx) {
+    	
+    	code.emit("while(");
+    	code.emit((String)visit(ctx.expression()));
+    	code.emit(") ");
+    	visit(ctx.statement());
+    	return null;
+    }
 }
