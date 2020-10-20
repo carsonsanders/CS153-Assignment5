@@ -1099,4 +1099,44 @@ public class Converter extends PascalBaseVisitor<Object>
     	
     	return null;
     }
+
+    @Override
+    public Object visitForStatement(PascalParser.ForStatementContext ctx) {
+    	code.emit("for(");
+
+    	code.emit((String) visit(ctx.variable()));
+    	code.emit(" = ");
+    	code.emit((String) visit(ctx.expression().get(0)));
+    	code.emit("; " + (String)visit(ctx.variable()));
+    	
+    	if (ctx.TO() != null) {
+    		code.emit(" < "); 
+    		code.emit((String) visit(ctx.expression().get(1)));
+    		code.emit("; " + (String) visit(ctx.variable()) + "++)");
+    	} else if (ctx.DOWNTO() != null) {
+    		code.emit(" > ");
+    		code.emit((String) visit(ctx.expression().get(1)));
+    		code.emit("; " + (String) visit(ctx.variable()) + "--)");
+    	}
+    	code.indent();
+    	
+    	if (ctx.statement() != null) visit(ctx.statement()); 
+    	
+    	code.dedent();
+    	
+    	
+    	return null; 
+    }
+    
+    @Override
+    public Object visitIfStatement(PascalParser.IfStatementContext ctx) {
+    	
+    	code.emit("if (" + (String) visit(ctx.expression()) + ") ");
+    	visit(ctx.trueStatement());
+    	if(ctx.ELSE() != null) {
+    		code.emit("else ");
+        	visit(ctx.falseStatement());
+    	}
+        return null;
+    }
 }
